@@ -5,8 +5,10 @@ import random
 # Checks if the leaderboard file has been created
 try:
 	leaderboard = open("leaderboard.txt", "r")
+	leaderboard.close()
 except:
 	leaderboard = open("leaderboard.txt", "w")
+	leaderboard.close()
 
 points = 0
 lives = 10
