@@ -15,6 +15,8 @@ lives = 10
 
 
 def loginToGame():
+	global fullName
+	fullName = name.get()
 	frameLogin.grid_forget()
 	frameGame.grid(column=0, row=0)
 
@@ -25,6 +27,50 @@ def game():
 
 
 def leader():
+	pointsList = []
+	leaderboard = open("leaderboard.txt", "r")
+	for row in leaderboard:
+		field = row.split(", ")
+		pointsList.append(str(field[1]))
+	pointsList = sorted(pointsList, reverse=True)
+	leaderboard.close()
+
+	entriesList = []
+	for i in range(len(pointsList)):
+		leaderboard.close()
+		leaderboard = open("leaderboard.txt", "r")
+		for row in leaderboard:
+			field = row.split(", ")
+			if pointsList[i] == field[1]:
+				entriesList.append(row)
+
+	if len(entriesList) < 10:
+		names = ""
+		nums = ""
+		for i in range(len(entriesList)):
+			entry = entriesList[i].split(", ")
+			name = entry[0] + "\n"
+			num = entry[1]
+			names += name
+			nums += num
+		for i in range(10 - len(entriesList)):
+			names += "\n"
+			nums += "\n"
+		Label(frameLead, text=names, background="lightblue").grid(column=1, row=2)
+		Label(frameLead, text=nums, background="lightblue").grid(column=2, row=2)
+	else:
+		names = ""
+		nums = ""
+		for i in range(10):
+			entry = entriesList[i].split(", ")
+			name = entry[0] + "\n"
+			num = entry[1] + "\n"
+			names += name
+			nums += num
+			Label(frameLead, text=names, background="lightblue").grid(column=1, row=2)
+			Label(frameLead, text=nums, background="lightblue").grid(column=2, row=2)
+
+	leaderboard.close()
 	frameGame.grid_forget()
 	frameLead.grid(column=0, row=0)
 
@@ -45,6 +91,17 @@ def submit():
 			livesDis.config(text="Live(s): " + str(lives))
 	else:
 		result.config(text="Out of lives! Points and lives have been reset!")
+		entry = fullName + ", " + str(points) + "\n"
+		leaderboard = open("leaderboard.txt", "r")
+		inList = 0
+		for row in leaderboard:
+			if entry == row:
+				inList = 1
+		if inList != 1:
+			leaderboard.close()
+			leaderboard = open("leaderboard.txt", "a")
+			leaderboard.write(entry)
+		leaderboard.close()
 		points = 0
 		pointsDis.config(text="Point(s): " + str(points))
 		lives = 10
@@ -68,8 +125,8 @@ Label(frameLogin, text="Full Name:", background="lightblue").grid(column=0,
                                                                   row=1,
                                                                   padx=5,
                                                                   pady=5)
-fullname = Entry(frameLogin)
-fullname.grid(column=1, row=1, padx=5, pady=5)
+name = Entry(frameLogin)
+name.grid(column=1, row=1, padx=5, pady=5)
 
 Button(frameLogin, text="Submit", command=loginToGame).grid(column=0,
                                                             row=2,
@@ -136,7 +193,7 @@ Label(frameLead, text="Points", font=("Arial", 16),
 ranks = ""
 for i in range(1, 11):
 	rank = "#" + str(i) + "\n"
-	ranks = ranks + rank
+	ranks += rank
 	Label(frameLead, text=ranks, background="lightblue").grid(column=0, row=2)
 
 Button(frameLead, text="Back To Game", command=game).grid(column=1,
