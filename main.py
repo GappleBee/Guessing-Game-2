@@ -80,32 +80,35 @@ def submit():
 	global lives
 	randNum = random.randint(1, 10)
 	num = int(guess.get())
-	if lives > 1:
-		if num == randNum:
-			result.config(text="Correct!")
-			points += 1
-			pointsDis.config(text="Point(s): " + str(points))
+	if 1 <= num <= 10:
+		if lives > 1:
+			if num == randNum:
+				result.config(text="Correct!")
+				points += 1
+				pointsDis.config(text="Point(s): " + str(points))
+			else:
+				result.config(text="Incorrect!")
+				lives -= 1
+				livesDis.config(text="Live(s): " + str(lives))
 		else:
-			result.config(text="Incorrect!")
-			lives -= 1
+			result.config(text="Out of lives! Points and lives have been reset!")
+			entry = fullName + ", " + str(points) + "\n"
+			leaderboard = open("leaderboard.txt", "r")
+			inList = 0
+			for row in leaderboard:
+				if entry == row:
+					inList = 1
+			if inList != 1:
+				leaderboard.close()
+				leaderboard = open("leaderboard.txt", "a")
+				leaderboard.write(entry)
+			leaderboard.close()
+			points = 0
+			pointsDis.config(text="Point(s): " + str(points))
+			lives = 10
 			livesDis.config(text="Live(s): " + str(lives))
 	else:
-		result.config(text="Out of lives! Points and lives have been reset!")
-		entry = fullName + ", " + str(points) + "\n"
-		leaderboard = open("leaderboard.txt", "r")
-		inList = 0
-		for row in leaderboard:
-			if entry == row:
-				inList = 1
-		if inList != 1:
-			leaderboard.close()
-			leaderboard = open("leaderboard.txt", "a")
-			leaderboard.write(entry)
-		leaderboard.close()
-		points = 0
-		pointsDis.config(text="Point(s): " + str(points))
-		lives = 10
-		livesDis.config(text="Live(s): " + str(lives))
+		result.config(text="Invalid input! Enter a number between 1 and 10!")
 
 
 root = Tk()
